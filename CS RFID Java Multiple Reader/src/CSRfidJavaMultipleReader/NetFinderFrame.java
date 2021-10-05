@@ -37,6 +37,7 @@ public class NetFinderFrame extends javax.swing.JFrame implements DeviceFoundEve
         deviceListModel = (DefaultListModel)list_device.getModel();
 
         Main.netfinder = new NetFinder();
+        Main.settings = new Settings();
 
         AttachCallback(true);
 
@@ -66,6 +67,24 @@ public class NetFinderFrame extends javax.swing.JFrame implements DeviceFoundEve
         btn_ucodedna = new javax.swing.JButton();
         cb_region = new javax.swing.JComboBox();
         jLabel1 = new javax.swing.JLabel();
+        btn_set = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        cb_port0 = new javax.swing.JCheckBox();
+        cb_port1 = new javax.swing.JCheckBox();
+        cb_port2 = new javax.swing.JCheckBox();
+        cb_port3 = new javax.swing.JCheckBox();
+        cb_port4 = new javax.swing.JCheckBox();
+        cb_port5 = new javax.swing.JCheckBox();
+        cb_port6 = new javax.swing.JCheckBox();
+        cb_port7 = new javax.swing.JCheckBox();
+        cb_port8 = new javax.swing.JCheckBox();
+        cb_port9 = new javax.swing.JCheckBox();
+        cb_port10 = new javax.swing.JCheckBox();
+        cb_port11 = new javax.swing.JCheckBox();
+        cb_port12 = new javax.swing.JCheckBox();
+        cb_port13 = new javax.swing.JCheckBox();
+        cb_port14 = new javax.swing.JCheckBox();
+        cb_port15 = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Search Device");
@@ -147,6 +166,49 @@ public class NetFinderFrame extends javax.swing.JFrame implements DeviceFoundEve
 
         jLabel1.setText("Region:");
 
+        btn_set.setBackground(java.awt.Color.orange);
+        btn_set.setText("Set");
+        btn_set.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_setActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText("Port:");
+
+        cb_port0.setSelected(true);
+        cb_port0.setText("0");
+
+        cb_port1.setText("1");
+
+        cb_port2.setText("2");
+
+        cb_port3.setText("3");
+
+        cb_port4.setText("4");
+
+        cb_port5.setText("5");
+
+        cb_port6.setText("6");
+
+        cb_port7.setText("7");
+
+        cb_port8.setText("8");
+
+        cb_port9.setText("9");
+
+        cb_port10.setText("10");
+
+        cb_port11.setText("11");
+
+        cb_port12.setText("12");
+
+        cb_port13.setText("13");
+
+        cb_port14.setText("14");
+
+        cb_port15.setText("15");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -168,10 +230,49 @@ public class NetFinderFrame extends javax.swing.JFrame implements DeviceFoundEve
                         .addComponent(btn_ucodedna)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btn_clear, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btn_set, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cb_region, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cb_region, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addGap(18, 18, 18)
+                                .addComponent(cb_port0)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cb_port1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cb_port2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cb_port3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cb_port4)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cb_port5)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cb_port6)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cb_port7)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cb_port8)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cb_port9)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cb_port10)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cb_port11)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cb_port12)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cb_port13)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cb_port14)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cb_port15)))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -194,6 +295,27 @@ public class NetFinderFrame extends javax.swing.JFrame implements DeviceFoundEve
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cb_region, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cb_port0)
+                    .addComponent(jLabel2)
+                    .addComponent(cb_port1)
+                    .addComponent(cb_port2)
+                    .addComponent(cb_port3)
+                    .addComponent(cb_port4)
+                    .addComponent(cb_port5)
+                    .addComponent(cb_port6)
+                    .addComponent(cb_port7)
+                    .addComponent(cb_port8)
+                    .addComponent(cb_port9)
+                    .addComponent(cb_port10)
+                    .addComponent(cb_port11)
+                    .addComponent(cb_port12)
+                    .addComponent(cb_port13)
+                    .addComponent(cb_port14)
+                    .addComponent(cb_port15))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btn_set, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -379,6 +501,26 @@ public class NetFinderFrame extends javax.swing.JFrame implements DeviceFoundEve
         Close();
     }//GEN-LAST:event_btn_ucodednaActionPerformed
 
+    private void btn_setActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_setActionPerformed
+        Main.settings.region = cb_region.getSelectedIndex();
+        Main.settings.port[0] = cb_port0.isSelected() ? 1 : 0;
+        Main.settings.port[1] = cb_port1.isSelected() ? 1 : 0;
+        Main.settings.port[2] = cb_port2.isSelected() ? 1 : 0;
+        Main.settings.port[3] = cb_port3.isSelected() ? 1 : 0;
+        Main.settings.port[4] = cb_port4.isSelected() ? 1 : 0;
+        Main.settings.port[5] = cb_port5.isSelected() ? 1 : 0;
+        Main.settings.port[6] = cb_port6.isSelected() ? 1 : 0;
+        Main.settings.port[7] = cb_port7.isSelected() ? 1 : 0;
+        Main.settings.port[8] = cb_port8.isSelected() ? 1 : 0;
+        Main.settings.port[9] = cb_port9.isSelected() ? 1 : 0;
+        Main.settings.port[10] = cb_port10.isSelected() ? 1 : 0;
+        Main.settings.port[11] = cb_port11.isSelected() ? 1 : 0;
+        Main.settings.port[12] = cb_port12.isSelected() ? 1 : 0;
+        Main.settings.port[13] = cb_port13.isSelected() ? 1 : 0;
+        Main.settings.port[14] = cb_port14.isSelected() ? 1 : 0;
+        Main.settings.port[15] = cb_port15.isSelected() ? 1 : 0;
+    }//GEN-LAST:event_btn_setActionPerformed
+
     private void Close()
     {
         AttachCallback(false);
@@ -482,12 +624,30 @@ public class NetFinderFrame extends javax.swing.JFrame implements DeviceFoundEve
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_clear;
     private javax.swing.JButton btn_inventory;
+    private javax.swing.JButton btn_set;
     private javax.swing.JButton btn_start;
     private javax.swing.JButton btn_tidinventory;
     private javax.swing.JButton btn_ucode7;
     private javax.swing.JButton btn_ucodedna;
+    private javax.swing.JCheckBox cb_port0;
+    private javax.swing.JCheckBox cb_port1;
+    private javax.swing.JCheckBox cb_port10;
+    private javax.swing.JCheckBox cb_port11;
+    private javax.swing.JCheckBox cb_port12;
+    private javax.swing.JCheckBox cb_port13;
+    private javax.swing.JCheckBox cb_port14;
+    private javax.swing.JCheckBox cb_port15;
+    private javax.swing.JCheckBox cb_port2;
+    private javax.swing.JCheckBox cb_port3;
+    private javax.swing.JCheckBox cb_port4;
+    private javax.swing.JCheckBox cb_port5;
+    private javax.swing.JCheckBox cb_port6;
+    private javax.swing.JCheckBox cb_port7;
+    private javax.swing.JCheckBox cb_port8;
+    private javax.swing.JCheckBox cb_port9;
     private javax.swing.JComboBox cb_region;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lbl_info;
     private javax.swing.JList list_device;

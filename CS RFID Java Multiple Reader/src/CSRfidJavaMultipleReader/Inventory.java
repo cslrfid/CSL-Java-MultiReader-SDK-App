@@ -152,7 +152,7 @@ public class Inventory{
         return (float)(20 * Math.log10((1 << Exponent) * (1 + Mantissa / 8)));
     }
     
-    public void StartInventory(String ip, int region) {
+    public void StartInventory(String ip, Settings settings) {
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Date date = null;
         Scanner in;
@@ -183,40 +183,31 @@ public class Inventory{
                 System.out.println("Send Abort command 0x4003000000000000");
                 clearReadBuffer(TCPDataIn);
 
-                if (port != 0)
+                for (port = 0; port < 16; port++)
                 {
-                    //Select Antenna port ANT_PORT_SEL
-                    TCPDataOut.write(hexStringToByteArray("7001010700000000"));
-                    System.out.println("Send ANT_PORT_SEL command 0x7001010700000000");
-                    Thread.sleep(1);
-
-                    TCPDataOut.write(hexStringToByteArray("7001020700000000"));
-                    System.out.println("Send ANT_PORT_CFG command 0x7001020700000000");
-                    Thread.sleep(1);
-
                     cmdString=String.format("70010107%02X000000", port & 0xFF);
                     TCPDataOut.write(hexStringToByteArray(cmdString));
                     System.out.println("Send ANT_PORT_SEL command 0x" + cmdString);
                     Thread.sleep(1);
 
-                    TCPDataOut.write(hexStringToByteArray("7001020701000000"));
-                    System.out.println("Send ANT_PORT_CFG command 0x7001020701000000");
-                    Thread.sleep(1);
-                }
-                else
-                {
-                    //Select Antenna port ANT_PORT_SEL
-                    TCPDataOut.write(hexStringToByteArray("7001010700000000"));
-                    System.out.println("Send ANT_PORT_SEL command 0x7001010700000000");
+                    if (settings.port[port] == 1)
+                    {
+                        TCPDataOut.write(hexStringToByteArray("7001020701000000"));
+                        System.out.println("Send ANT_PORT_CFG command 0x7001020701000000");
+                    }
+                    else
+                    {
+                        TCPDataOut.write(hexStringToByteArray("7001020700000000"));
+                        System.out.println("Send ANT_PORT_CFG command 0x7001020700000000");
+                    }
                     Thread.sleep(1);
 
+                    //Select RF power 30dBm
+                    cmdString=String.format("70010607%02X%02X0000", power & 0xFF, ((power >> 8) & 0xFF));
+                    //TCPDataOut.write(hexStringToByteArray("700106072C010000"));
+                    TCPDataOut.write(hexStringToByteArray(cmdString));
+                    System.out.println(String.format("Set RF Power to %4.1f dBm with command %s",(float)power / 10,cmdString));
                 }
-
-                //Select RF power 30dBm
-                cmdString=String.format("70010607%02X%02X0000", power & 0xFF, ((power >> 8) & 0xFF));
-                //TCPDataOut.write(hexStringToByteArray("700106072C010000"));
-                TCPDataOut.write(hexStringToByteArray(cmdString));
-                System.out.println(String.format("Set RF Power to %4.1f dBm with command %s",(float)power / 10,cmdString));
 
                 Thread.sleep(1);
                 //Set Link Profile 2
@@ -252,12 +243,12 @@ public class Inventory{
                 Country = inData[28];
                                 
                 Thread.sleep(1);
-                if (region != 0)
+                if (settings.region != 0)
                 {
                     //Fixed channel code
                     if (Country == 1)
                     {
-                        SetRegion(region);
+                        SetRegion(settings.region);
                         
                         //disable all channels         
                         for (int i=0;i<=49;i++)
@@ -275,7 +266,7 @@ public class Inventory{
                     }
                     else if (Country == 2)
                     {
-                        SetRegion(region);
+                        SetRegion(settings.region);
                     }
                 }
 
@@ -399,8 +390,9 @@ public class Inventory{
                                 rssi = ConvertNBRSSI(inData[13]);
                             else
                                 rssi *= 0.8;
+                            port = (int)inData[18];
                             
-                            AsyncCallbackRaiseEvent(new TagCallbackInfo(rssi, new S_PC(byteArrayToHexString(PC,2)), new S_EPC(byteArrayToHexString(EPC,datalen-16)), ipAddress, deviceName));
+                            AsyncCallbackRaiseEvent(new TagCallbackInfo(rssi, new S_PC(byteArrayToHexString(PC,2)), new S_EPC(byteArrayToHexString(EPC,datalen-16)), ipAddress, deviceName, port));
                             continue;
                         }
                     }

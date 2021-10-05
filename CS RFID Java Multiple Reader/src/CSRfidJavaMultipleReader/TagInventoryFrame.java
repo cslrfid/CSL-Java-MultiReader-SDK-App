@@ -106,14 +106,14 @@ public class TagInventoryFrame extends javax.swing.JFrame implements AsyncCallba
 
             },
             new String [] {
-                "Index", "PC", "EPC", "RSSI", "Count", "Source"
+                "Index", "PC", "EPC", "RSSI", "Count", "Source", "Port"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Float.class, java.lang.Integer.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Float.class, java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
+                false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -127,12 +127,15 @@ public class TagInventoryFrame extends javax.swing.JFrame implements AsyncCallba
         table_inventory.setRowHeight(25);
         table_inventory.getTableHeader().setReorderingAllowed(false);
         jScrollPane2.setViewportView(table_inventory);
-        table_inventory.getColumnModel().getColumn(0).setPreferredWidth(40);
-        table_inventory.getColumnModel().getColumn(1).setPreferredWidth(40);
-        table_inventory.getColumnModel().getColumn(2).setPreferredWidth(320);
-        table_inventory.getColumnModel().getColumn(3).setPreferredWidth(40);
-        table_inventory.getColumnModel().getColumn(4).setPreferredWidth(40);
-        table_inventory.getColumnModel().getColumn(5).setPreferredWidth(130);
+        if (table_inventory.getColumnModel().getColumnCount() > 0) {
+            table_inventory.getColumnModel().getColumn(0).setPreferredWidth(40);
+            table_inventory.getColumnModel().getColumn(1).setPreferredWidth(40);
+            table_inventory.getColumnModel().getColumn(2).setPreferredWidth(320);
+            table_inventory.getColumnModel().getColumn(3).setPreferredWidth(40);
+            table_inventory.getColumnModel().getColumn(4).setPreferredWidth(40);
+            table_inventory.getColumnModel().getColumn(5).setPreferredWidth(130);
+            table_inventory.getColumnModel().getColumn(6).setPreferredWidth(40);
+        }
 
         btn_clear.setBackground(java.awt.Color.cyan);
         btn_clear.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
@@ -177,9 +180,11 @@ public class TagInventoryFrame extends javax.swing.JFrame implements AsyncCallba
             }
         });
         jScrollPane1.setViewportView(table_rate);
-        table_rate.getColumnModel().getColumn(0).setResizable(false);
-        table_rate.getColumnModel().getColumn(1).setResizable(false);
-        table_rate.getColumnModel().getColumn(2).setResizable(false);
+        if (table_rate.getColumnModel().getColumnCount() > 0) {
+            table_rate.getColumnModel().getColumn(0).setResizable(false);
+            table_rate.getColumnModel().getColumn(1).setResizable(false);
+            table_rate.getColumnModel().getColumn(2).setResizable(false);
+        }
 
         cb_debuglog.setText("Save debug log");
 
@@ -187,7 +192,7 @@ public class TagInventoryFrame extends javax.swing.JFrame implements AsyncCallba
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 674, Short.MAX_VALUE)
+            .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 755, Short.MAX_VALUE)
             .add(layout.createSequentialGroup()
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -250,6 +255,7 @@ public class TagInventoryFrame extends javax.swing.JFrame implements AsyncCallba
                 {
                     table_inventory.setValueAt(new Float(found.rssi), i, 3);
                     table_inventory.setValueAt(new Integer(found.count), i, 4);
+                    table_inventory.setValueAt(new Integer(found.port), i, 6);
                 }
             }
         }
@@ -257,7 +263,7 @@ public class TagInventoryFrame extends javax.swing.JFrame implements AsyncCallba
         {
             m_tagCount = record.index = InventoryListItems.size();
             InventoryListItems.add(record);
-            Object[] entry = new Object[] {new Integer(record.index), record.pc.ToString(), record.epc.ToString(), new Float(record.rssi), new Integer(record.count), record.source};
+            Object[] entry = new Object[] {new Integer(record.index), record.pc.ToString(), record.epc.ToString(), new Float(record.rssi), new Integer(record.count), record.source, record.port};
             inventoryTableModel.addRow(entry);
             Collections.sort(InventoryListItems);
         }
@@ -447,7 +453,7 @@ public class TagInventoryFrame extends javax.swing.JFrame implements AsyncCallba
         }
 
         public void run() {                   
-            inventory.StartInventory(ip, region);
+            inventory.StartInventory(ip, Main.settings);
         }
     }
     // </editor-fold>

@@ -36,6 +36,7 @@ public class TagCallbackInfo implements Comparable{
      * TID Data
      */
     public S_EPC tid;
+    public int port;
     /**
      * Constructor
      */
@@ -51,7 +52,7 @@ public class TagCallbackInfo implements Comparable{
      * @param epc
      * @param port
      */
-    public TagCallbackInfo(int index, float rssi, int count, S_PC pc, S_EPC epc, String source, String deviceName)
+    public TagCallbackInfo(int index, float rssi, int count, S_PC pc, S_EPC epc, String source, String deviceName, int port)
     {
         this.index = index;
         this.rssi = rssi;
@@ -60,6 +61,7 @@ public class TagCallbackInfo implements Comparable{
         this.epc = epc;
         this.source = source;
         this.deviceName = deviceName;
+        this.port = port;
     }
 
     /**
@@ -69,13 +71,14 @@ public class TagCallbackInfo implements Comparable{
      * @param epc
      * @param port
      */
-    public TagCallbackInfo(float rssi, S_PC pc, S_EPC epc, String source, String deviceName)
+    public TagCallbackInfo(float rssi, S_PC pc, S_EPC epc, String source, String deviceName, int port)
     {
         this.rssi = rssi;
         this.pc = pc;
         this.epc = epc;
         this.source = source;
         this.deviceName = deviceName;
+        this.port = port;
     }
 
     /**
@@ -85,13 +88,14 @@ public class TagCallbackInfo implements Comparable{
      * @param epc
      * @param port
      */
-    public TagCallbackInfo(int index, S_PC pc, S_EPC epc, String source, String deviceName)
+    public TagCallbackInfo(int index, S_PC pc, S_EPC epc, String source, String deviceName, int port)
     {
         this.index = index;
         this.pc = pc;
         this.epc = epc;
         this.source = source;
         this.deviceName = deviceName;
+        this.port = port;
     }
 
     /**
@@ -100,12 +104,13 @@ public class TagCallbackInfo implements Comparable{
      * @param epc
      * @param port
      */
-    public TagCallbackInfo(S_PC pc, S_EPC epc, String source, String deviceName)
+    public TagCallbackInfo(S_PC pc, S_EPC epc, String source, String deviceName, int port)
     {
         this.pc = pc;
         this.epc = epc;
         this.source = source;
         this.deviceName = deviceName;
+        this.port = port;
     }
     
     public TagCallbackInfo(S_PC pc, S_EPC epc, S_EPC tid)
