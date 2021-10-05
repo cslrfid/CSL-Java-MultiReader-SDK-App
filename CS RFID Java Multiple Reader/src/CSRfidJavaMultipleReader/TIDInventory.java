@@ -141,7 +141,15 @@ public class TIDInventory{
         }
     }
     
-    public void StartInventory(String ip) {
+    private float ConvertNBRSSI(int rssi)
+    {
+        float Mantissa = rssi & 0x07;
+        int Exponent = (rssi >> 3) & 0x1F;
+
+        return (float)(20 * Math.log10((1 << Exponent) * (1 + Mantissa / 8)));
+    }
+    
+    public void StartInventory(String ip, int region) {
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Date date = null;
         Scanner in;
@@ -227,6 +235,7 @@ public class TIDInventory{
                 //Read Country code
                 TCPDataOut.write(hexStringToByteArray("7001000502000000"));
                 Thread.sleep(1);
+                clearReadBuffer(TCPDataIn);
                 TCPDataOut.write(hexStringToByteArray("700100f003000000"));
                 Thread.sleep(1);
                 while(true)
@@ -240,76 +249,30 @@ public class TIDInventory{
                 Country = inData[28];
                                 
                 Thread.sleep(1);
-                //Fixed channel code
-                if (Country == 1 || Country == 3 || Country == 8)
+                if (region != 0)
                 {
-                    //disable all channels         
-                    for (int i=0;i<=49;i++)
+                    //Fixed channel code
+                    if (Country == 1)
                     {
-                        TCPDataOut.write(hexStringToByteArray(String.format("7001010C%02X000000", i)));
-                        Thread.sleep(1);
-                        TCPDataOut.write(hexStringToByteArray("7001020C00000000"));
-                        Thread.sleep(1);
-                    }
-                    //enable channel 1
-                    TCPDataOut.write(hexStringToByteArray("7001010C01000000"));
-                    Thread.sleep(1);
-                    TCPDataOut.write(hexStringToByteArray("7001020C01000000"));
-                    Thread.sleep(1);
-                }
-                else if (Country == 2)
-                {
-                    //Enable channels
-                    for (int i = 0; i < FCC_CHN_CNT; i++)
-                    {
-                        TCPDataOut.write(hexStringToByteArray(String.format("7001010C%02X000000", i)));
+                        SetRegion(region);
+                        
+                        //disable all channels         
+                        for (int i=0;i<=49;i++)
+                        {
+                            TCPDataOut.write(hexStringToByteArray(String.format("7001010C%02X000000", i)));
+                            Thread.sleep(1);
+                            TCPDataOut.write(hexStringToByteArray("7001020C00000000"));
+                            Thread.sleep(1);
+                        }
+                        //enable channel 1
+                        TCPDataOut.write(hexStringToByteArray("7001010C01000000"));
                         Thread.sleep(1);
                         TCPDataOut.write(hexStringToByteArray("7001020C01000000"));
                         Thread.sleep(1);
-                        TCPDataOut.write(hexStringToByteArray(String.format("7001030C%08X", fccFreqTable[fccFreqSortedIdx[i]])));
-                        Thread.sleep(1);
                     }
-                }
-                else if (Country == 4)
-                {
-                    //Enable channels
-                    for (int i = 0; i < TW_CHN_CNT; i++)
+                    else if (Country == 2)
                     {
-                        TCPDataOut.write(hexStringToByteArray(String.format("7001010C%02X000000", i)));
-                        Thread.sleep(1);
-                        TCPDataOut.write(hexStringToByteArray("7001020C01000000"));
-                        Thread.sleep(1);
-                        TCPDataOut.write(hexStringToByteArray(String.format("7001030C%08X", twFreqTable[twFreqSortedIdx[i]])));
-                        Thread.sleep(1);
-                    }
-                    //Disable channels
-                    for (int i = TW_CHN_CNT; i < 50; i++)
-                    {
-                        TCPDataOut.write(hexStringToByteArray(String.format("7001010C%02X000000", i)));
-                        Thread.sleep(1);
-                        TCPDataOut.write(hexStringToByteArray("7001020C00000000"));
-                        Thread.sleep(1);
-                    }
-                }
-                else if (Country == 7)
-                {
-                    //Enable channels
-                    for (int i = 0; i < CN_CHN_CNT; i++)
-                    {
-                        TCPDataOut.write(hexStringToByteArray(String.format("7001010C%02X000000", i)));
-                        Thread.sleep(1);
-                        TCPDataOut.write(hexStringToByteArray("7001020C01000000"));
-                        Thread.sleep(1);
-                        TCPDataOut.write(hexStringToByteArray(String.format("7001030C%08X", cnFreqTable[cnFreqSortedIdx[i]])));
-                        Thread.sleep(1);
-                    }
-                    //Disable channels
-                    for (int i = CN_CHN_CNT; i < 50; i++)
-                    {
-                        TCPDataOut.write(hexStringToByteArray(String.format("7001010C%02X000000", i)));
-                        Thread.sleep(1);
-                        TCPDataOut.write(hexStringToByteArray("7001020C00000000"));
-                        Thread.sleep(1);
+                        SetRegion(region);
                     }
                 }
 
@@ -375,7 +338,7 @@ public class TIDInventory{
                         int pkt_type = (int) (inData[2] & 0xFF) + ((int)(inData[3] & 0xFF) << 8);
                         int pkt_len = (int) (inData[4] & 0xFF) + ((int)(inData[5] & 0xFF) << 8);
                         int datalen = pkt_len * 4;
-                        if (pkt_ver != 0x01 && pkt_ver != 0x02)
+                        if (pkt_ver != 0x01 && pkt_ver != 0x02 && pkt_ver != 0x03)
                         {
                             System.out.println("Unrecognized packet header: " + byteArrayToHexString(inData, len));
                             continue;
@@ -443,14 +406,17 @@ public class TIDInventory{
                                 TID[cnt] = inData[22 + epclen + cnt];
                             }
                             float rssi = inData[13];
-                            rssi *= 0.8;
+                            if (pkt_ver == 0x03)
+                                rssi = ConvertNBRSSI(inData[13]);
+                            else
+                                rssi *= 0.8;
                             
                             AsyncCallbackRaiseEvent(new TagCallbackInfo(new S_PC(byteArrayToHexString(PC,2)), new S_EPC(byteArrayToHexString(EPC,epclen)), new S_EPC(byteArrayToHexString(TID,datalen - 16 - epclen))));
                             continue;
                         }
                     }
                     else {
-                        if (System.currentTimeMillis() - timer >= 2000) {
+                        if (System.currentTimeMillis() - timer >= 4000) {
                             System.out.println("Connection lost.  Please reconnect");
                             System.out.println("Close Connections");
 
@@ -483,6 +449,162 @@ public class TIDInventory{
             System.err.println(ex.getMessage());
         }
     }
+    
+    private void SetRegion(int region)
+    {
+        int i;
+        int[] freqTable = null;
+
+        if (region == 0) return;
+        
+        try
+        {
+            //disable all channels         
+            for (i = 0; i <= 49; i++)
+            {
+                TCPDataOut.write(hexStringToByteArray(String.format("7001010C%02X000000", i)));
+                Thread.sleep(1);
+                TCPDataOut.write(hexStringToByteArray("7001020C00000000"));
+                Thread.sleep(1);
+            }
+
+            switch (region)
+            {
+                case 0:
+                    break;
+                case 1:
+                    freqTable = FreqTable.hkFreqTable;
+                    break;
+                case 2:
+                    freqTable = FreqTable.zaFreqTable;
+                    break;
+                case 3:
+                    freqTable = FreqTable.thFreqTable;
+                    break;
+                case 4:
+                    freqTable = FreqTable.LH1FreqTable;
+                    break;
+                case 5:
+                    freqTable = FreqTable.LH2FreqTable;
+                    break;
+                case 6:
+                    freqTable = FreqTable.veFreqTable;
+                    break;
+                case 7:
+                    freqTable = FreqTable.fccFreqTable;
+                    break;
+                case 8:
+                    freqTable = FreqTable.indonesiaFreqTable;
+                    break;
+                case 9:
+                    freqTable = FreqTable.UH2FreqTable;
+                    break;
+                case 10:
+                    freqTable = FreqTable.fccFreqTable;
+                    break;
+                case 11:
+                    freqTable = FreqTable.fccFreqTable;
+                    break;
+                case 12:
+                    freqTable = FreqTable.UH1FreqTable;
+                    break;
+                case 13:
+                    freqTable = FreqTable.fccFreqTable;
+                    break;
+                case 14:
+                    freqTable = FreqTable.mysFreqTable;
+                    break;
+                case 15:
+                    freqTable = FreqTable.sgFreqTable;
+                    break;
+                case 16:
+                    freqTable = FreqTable.AusFreqTable;
+                    break;
+                case 17:
+                    freqTable = FreqTable.br1FreqTable;
+                    break;
+                case 18:
+                    freqTable = FreqTable.br2FreqTable;
+                    break;
+                case 19:
+                    freqTable = FreqTable.br3FreqTable;
+                    break;
+                case 20:
+                    freqTable = FreqTable.br4FreqTable;
+                    break;
+                case 21:
+                    freqTable = FreqTable.br5FreqTable;
+                    break;
+                case 22:
+                    freqTable = FreqTable.phiFreqTable;
+                    break;
+                case 23:
+                    freqTable = FreqTable.fccFreqTable;
+                    break;
+                case 24:
+                    freqTable = FreqTable.fccFreqTable;
+                    break;
+                case 25:
+                    freqTable = FreqTable.fccFreqTable;
+                    break;
+                case 26:
+                    freqTable = FreqTable.isFreqTable;
+                    break;
+                case 27:
+                    freqTable = FreqTable.fccFreqTable;
+                    break;
+                case 28:
+                    freqTable = FreqTable.fccFreqTable;
+                    break;
+                case 29:
+                    freqTable = FreqTable.etsiFreqTable;
+                    break;
+                case 30:
+                    freqTable = FreqTable.indiaFreqTable;
+                    break;
+                default:
+                    freqTable = FreqTable.fccFreqTable;
+                    break;
+            }
+                
+            for (i = 0; i < freqTable.length; i++)
+            {
+                TCPDataOut.write(hexStringToByteArray(String.format("7001010C%02X000000", i)));
+                Thread.sleep(1);
+
+                System.out.println(String.format("freqTable %d, %08X", i, freqTable[i]));
+                int t_freqVal = swapMSBLSB32bit(freqTable[i]);
+                System.out.println(String.format("t_freqVal %08X", t_freqVal));
+
+                TCPDataOut.write(hexStringToByteArray(String.format("7001030C%08X", t_freqVal)));
+                Thread.sleep(1);
+
+                TCPDataOut.write(hexStringToByteArray("7001020C01000000"));
+                Thread.sleep(1);
+            }
+        }
+        catch (Exception ex)
+        {
+            System.err.println(ex.getMessage());
+        }
+    }
+    
+    private int swapMSBLSB32bit(int in_32bit)
+    {
+        int[] t_shift = new int[] {0,8,16,24};
+        int[] t_tmpVal = new int[4];
+        int out_32bit;
+        int j;
+
+        out_32bit = 0;
+        for(j=0; j<4; j++)
+        {
+                t_tmpVal[j] = (in_32bit>>t_shift[j]) & 0xff;
+                out_32bit |= t_tmpVal[j]<<t_shift[3-j];
+        }
+
+        return out_32bit;
+    } 
     
     private void AsyncCallbackRaiseEvent(TagCallbackInfo data)
     {

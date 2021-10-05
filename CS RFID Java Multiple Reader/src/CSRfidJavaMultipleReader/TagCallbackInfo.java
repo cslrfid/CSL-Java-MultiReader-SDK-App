@@ -39,6 +39,8 @@ public class TagCallbackInfo implements Comparable{
     /**
      * Constructor
      */
+    boolean result;
+    String data = "";
     public TagCallbackInfo() { }
     /**
      * Constructor
@@ -111,6 +113,21 @@ public class TagCallbackInfo implements Comparable{
         this.pc = pc;
         this.epc = epc;
         this.tid = tid;
+    }
+    
+    public TagCallbackInfo(boolean result, S_EPC epc, String source)
+    {
+        this.source = source;
+        this.result = result;
+        this.epc = epc;
+    }
+    
+    public TagCallbackInfo(boolean result, S_EPC epc, String data, String source)
+    {
+        this.source = source;
+        this.result = result;
+        this.data = data;
+        this.epc = epc;
     }
 
     /**

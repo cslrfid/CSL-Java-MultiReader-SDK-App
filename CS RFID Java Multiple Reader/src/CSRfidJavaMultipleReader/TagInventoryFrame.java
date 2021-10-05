@@ -35,13 +35,14 @@ public class TagInventoryFrame extends javax.swing.JFrame implements AsyncCallba
     private int lastThreadId = -1;
     private PrintWriter outputCommand;
     private String JavaProcessPath = "CS203JavaProcessDemo.jar"; // modify it to your desired path
+    private int region = 0;
     
     private AsyncCallbackEventListener cls = this;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Init">
     /** Creates new form TagInventoryFrame */
-    public TagInventoryFrame() {
+    public TagInventoryFrame(int region) {
         initComponents();
 
         //Center the dialog
@@ -52,6 +53,7 @@ public class TagInventoryFrame extends javax.swing.JFrame implements AsyncCallba
         rateTableModel = (DefaultTableModel)table_rate.getModel();
 
         this.setIconImage(new ImageIcon("CSL Logo.jpg").getImage());
+        this.region = region;
     }
     // </editor-fold>
 
@@ -445,7 +447,7 @@ public class TagInventoryFrame extends javax.swing.JFrame implements AsyncCallba
         }
 
         public void run() {                   
-            inventory.StartInventory(ip);
+            inventory.StartInventory(ip, region);
         }
     }
     // </editor-fold>
@@ -502,7 +504,7 @@ public class TagInventoryFrame extends javax.swing.JFrame implements AsyncCallba
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new TagInventoryFrame().setVisible(true);
+                new TagInventoryFrame(0).setVisible(true);
             }
         });
     }

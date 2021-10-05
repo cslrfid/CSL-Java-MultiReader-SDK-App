@@ -11,7 +11,7 @@ import java.util.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
-public class Ucode7{
+public class UcodeDNA{
 
     private Thread reset;
     private String ipAddress = "192.168.25.203";
@@ -32,7 +32,7 @@ public class Ucode7{
         AsyncCallbackEventSubscribers.remove(cls);
     }
     
-    public Ucode7(String deviceName)
+    public UcodeDNA(String deviceName)
     {
         this.deviceName = deviceName;
     }
@@ -113,7 +113,7 @@ public class Ucode7{
         try 
         {
             TCPDataSocket.close();
-            Thread.sleep(4000);
+            Thread.sleep(2000);
         }
         catch (Exception ex)
         {
@@ -121,16 +121,17 @@ public class Ucode7{
         }
     }
     
-    public void StartBatchEncoding(String ip, String header) {
+    public boolean StartAuthenticate(String ip, String selected_epc, String key, String access_pw) {
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Date date = null;
-        Scanner in;
         String IPAddress, cmdString;
         int power = 300; // 300=30.0dBm
         int port=0; // antenna port number
         byte[] inData=new byte[1024];
+        byte[] response=new byte[32];
         int len=0;
         int Country = 2;
+        boolean ret = false;
         
         while (!Connect(ip)){};
 
@@ -138,6 +139,7 @@ public class Ucode7{
             //Send Abort command
             TCPDataOut.write(hexStringToByteArray("4003000000000000"));
             System.out.println("Send Abort command 0x4003000000000000");
+            Thread.sleep(100);
             clearReadBuffer(TCPDataIn);
 
             if (port != 0)
@@ -281,17 +283,17 @@ public class Ucode7{
                 }
             }
 
-            //Enable Ucode7 parallel encoding
-            TCPDataOut.write(hexStringToByteArray("7001000980030000")); // Bit 9 enable or disable Ucode7 parallel encoding
-            System.out.println("Enable Ucode7 parallel encoding command 7001000980030000");
+            //Set QUERY_CFG
+            TCPDataOut.write(hexStringToByteArray("7001000980010000"));
+            System.out.println("Set QUERY_CFG command 7001000980010000");
             Thread.sleep(1);
 
             //Set inventory algorithm
             TCPDataOut.write(hexStringToByteArray("7001020900000000"));     //fixed q
             System.out.println("Set INV_SEL  command 7001020900000000");
             Thread.sleep(1);
-            TCPDataOut.write(hexStringToByteArray("7001030900000000"));     //q = 0
-            System.out.println("Set INV_ALG_PARM_0  command 7001030900000000");
+            TCPDataOut.write(hexStringToByteArray("7001030901000000"));     //q = 0
+            System.out.println("Set INV_ALG_PARM_0  command 7001030901000000");
             Thread.sleep(1);
 
             //Set select
@@ -301,17 +303,31 @@ public class Ucode7{
             TCPDataOut.write(hexStringToByteArray("7001010809000000"));
             System.out.println("Send TAGMSK_DESC_CFG command 7001010809000000");
             Thread.sleep(1);
-            TCPDataOut.write(hexStringToByteArray("7001020801000000"));
+            TCPDataOut.write(hexStringToByteArray("7001020801000000")); // select epc bank
             System.out.println("Send TAGMSK_BANK command 7001020801000000");
             Thread.sleep(1);
-            TCPDataOut.write(hexStringToByteArray("7001030802020000"));
-            System.out.println("Send TAGMSK_PTR command 7001030802020000");
+            TCPDataOut.write(hexStringToByteArray("7001030820000000"));
+            System.out.println("Send TAGMSK_PTR command 7001030820000000");
             Thread.sleep(1);
-            TCPDataOut.write(hexStringToByteArray("7001040801000000"));
-            System.out.println("Send TAGMSK_LEN command 7001040801000000");
+            TCPDataOut.write(hexStringToByteArray("7001040860000000"));
+            System.out.println("Send TAGMSK_LEN command 7001040860000000");
             Thread.sleep(1);
-            TCPDataOut.write(hexStringToByteArray("7001050880000000"));
-            System.out.println("Send TAGMSK_0_3 command 7001050880000000");
+            
+            byte[] epcheader = hexStringToByteArray(selected_epc);            
+            TCPDataOut.write(hexStringToByteArray(String.format("70010508%02X%02X%02X%02X", epcheader[0], epcheader[1],epcheader[2], epcheader[3])));
+            System.out.println("Send TAGMSK_0_3 command");
+            Thread.sleep(1);
+            TCPDataOut.write(hexStringToByteArray(String.format("70010608%02X%02X%02X%02X", epcheader[4], epcheader[5],epcheader[6], epcheader[7])));
+            System.out.println("Send TAGMSK_4_7 command");
+            Thread.sleep(1);
+            TCPDataOut.write(hexStringToByteArray(String.format("70010708%02X%02X%02X%02X", epcheader[8], epcheader[9],epcheader[10], epcheader[11])));
+            System.out.println("Send TAGMSK_8_11 command");
+            Thread.sleep(1);
+            
+            byte[] access = hexStringToByteArray(access_pw);
+            //Set access password
+            TCPDataOut.write(hexStringToByteArray(String.format("7001060A%02X%02X%02X%02X", access[3], access[2], access[1], access[0])));
+            System.out.println("Send TAGACC_ACCPWD command");
             Thread.sleep(1);
 
             //Set INV_CFG
@@ -319,141 +335,155 @@ public class Ucode7{
             System.out.println("Send INV_CFG command 7001010940400000");
             Thread.sleep(1);
 
+            //Set authenticate parameters
+            TCPDataOut.write(hexStringToByteArray("7001000f03800100")); // SenRep = 1; IncRepLen = 1; CSI = 0; Length = 96
+            System.out.println("Send command 7001000f03800100");
+            Thread.sleep(1);
+            // TAM1 message = 0x0000fd5d8048f48dd09aad22
+            TCPDataOut.write(hexStringToByteArray("7001010f5dfd0000")); 
+            System.out.println("Send command 7001010f5dfd0000");
+            Thread.sleep(1);
+            TCPDataOut.write(hexStringToByteArray("7001020f8df44880")); 
+            System.out.println("Send command 7001020f8df44880");
+            Thread.sleep(1);
+            TCPDataOut.write(hexStringToByteArray("7001030f22ad9ad0")); 
+            System.out.println("Send command 7001030f22ad9ad0");
+            Thread.sleep(1);
 
-            byte[] epcheader = hexStringToByteArray(header);
-            int wordlen = epcheader.length / 2;
-            //Set write parameters
-            TCPDataOut.write(hexStringToByteArray("7001010a01000000"));
-            System.out.println("Send TAGACC_DESC_CFG command 7001010a01000000");
-            Thread.sleep(1);
-            TCPDataOut.write(hexStringToByteArray("7001020a01000000"));// wrie EPC
-            System.out.println("Send TAGACC_BANK command 7001020a01000000");
-            Thread.sleep(1);
-            TCPDataOut.write(hexStringToByteArray("7001030a00000000"));// offset 0
-            System.out.println("Send TAGACC_PTR command 7001030a00000000");
-            Thread.sleep(1);
-            TCPDataOut.write(hexStringToByteArray(String.format("7001040a01000000"))); // number of words to write
-            System.out.println("Send TAGACC_CNT command");
-            Thread.sleep(1);
-            TCPDataOut.write(hexStringToByteArray("7001080a00000000"));// select write buffer
-            System.out.println("Send TAGWRDAT_SEL command 7001080a00000000");
-            Thread.sleep(1);
-            for (int i = 0; i < wordlen; i++)
+            //Start authenticate - send (HST_CMD)
+            long timer=System.currentTimeMillis();
+            clearReadBuffer(TCPDataIn);
+            TCPDataOut.write(hexStringToByteArray("700100f050000000"));
+            System.out.println("Start write - send (HST_CMD) 700100f050000000");
+            while(true)
             {
-                TCPDataOut.write(hexStringToByteArray(String.format("7001090a%02X%02X%02X00", epcheader[i*2+1], epcheader[i*2], 2+i)));// data word to write with offset 2 (PC offset)
-                System.out.println("Send TAGWRDAT_x command");
-                Thread.sleep(1);
-
-                //Start write - send (HST_CMD)
-                long timer=System.currentTimeMillis();
-                clearReadBuffer(TCPDataIn);
-                TCPDataOut.write(hexStringToByteArray("700100f011000000"));
-                System.out.println("Start write - send (HST_CMD) 700100f011000000");
-                while(true)
+                if(TCPDataIn.available() >= 8)
                 {
-                    if(TCPDataIn.available() >= 8)
+                    timer=System.currentTimeMillis();                        
+                    //get packet header first
+                    len=TCPDataIn.read(inData, 0, 8);
+
+                    //if (len<8)
+                    //    continue;
+
+                    if (byteArrayToHexString(inData,len).startsWith("9898989898989898"))
                     {
-                        timer=System.currentTimeMillis();                        
-                        //get packet header first
-                        len=TCPDataIn.read(inData, 0, 8);
-
-                        //if (len<8)
-                        //    continue;
-
-                        if (byteArrayToHexString(inData,len).startsWith("9898989898989898"))
-                        {
-                            date = new Date();
-                            System.out.println(dateFormat.format(date) + " TCP Notification Received.");
-                            continue;
-                        }
-                        else if (byteArrayToHexString(inData,len).startsWith("02000780")
-                                    || byteArrayToHexString(inData,len).startsWith("01000780"))
-                        {
-                            date = new Date();
-                            System.out.println(dateFormat.format(date) + " Antenna Cycle End Notification Received");
-                            continue;
-                        }
-                        else if (byteArrayToHexString(inData,len).startsWith("4003BFFCBFFCBFFC"))
-                        {
-                            // Check Abort command response
-                            System.out.println("All tag data has been returned");
-                            break ;
-                        }
-
-                        int pkt_ver = (int)(inData[0] & 0xFF);
-                        int flags = (int) (inData[1] & 0xFF);
-                        int pkt_type = (int) (inData[2] & 0xFF) + ((int)(inData[3] & 0xFF) << 8);
-                        int pkt_len = (int) (inData[4] & 0xFF) + ((int)(inData[5] & 0xFF) << 8);
-                        int datalen = pkt_len * 4;
-                        if (pkt_ver != 0x01 && pkt_ver != 0x02 && pkt_ver != 0x03)
-                        {
-                            System.out.println("Unrecognized packet header: " + byteArrayToHexString(inData, len));
-                            continue;
-                        }
-
-                        //wait until the full packet data has come in
-                        boolean inCompletePacket=false;
-                        while(TCPDataIn.available() < datalen)
-                        {
-                            if (System.currentTimeMillis() - timer >= 3000) {
-                                System.out.println("Incomplete packet returned.  Packet header: " + byteArrayToHexString(inData, len));
-                                len=TCPDataIn.read(inData, 0, TCPDataIn.available());
-                                System.out.println("Packet body: " + byteArrayToHexString(inData, len));
-                                inCompletePacket=true;
-                                break;
-                            }
-                        }
-                        if (inCompletePacket)
-                        {
-                            try {
-                                date = new Date();
-                                PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(ipAddress + ".txt", true)));
-                                out.println(dateFormat.format(date) + " Incomplete data packet due to reader connection lost");
-                                out.close();
-                            } catch (IOException e) {
-                                System.out.println("Could not write to log file " + e.toString());
-                            }
-                            break;
-                        }
-                        //finish reading
-                        TCPDataIn.read(inData, 8, datalen);
-
-                        if (pkt_type == 0x8001 || pkt_type == 0x0001)
-                        {
-                            date = new Date();
-                            System.out.println(dateFormat.format(date) + " Command End Packet: " + byteArrayToHexString(inData,len+datalen));
-                            break;
-                        }
-                        if (pkt_type == 0x8000 || pkt_type == 0x0000)
-                        {
-                            date = new Date();
-                            System.out.println(dateFormat.format(date) + " Command Begin Packet: " + byteArrayToHexString(inData,len+datalen));
-                            continue;
-                        }
+                        date = new Date();
+                        System.out.println(dateFormat.format(date) + " TCP Notification Received.");
+                        continue;
                     }
-                    else {
-                        if (System.currentTimeMillis() - timer >= 2000) {
-                            System.out.println("Connection lost.  Please reconnect");
-                            System.out.println("Close Connections");
+                    else if (byteArrayToHexString(inData,len).startsWith("02000780")
+                                || byteArrayToHexString(inData,len).startsWith("01000780"))
+                    {
+                        date = new Date();
+                        System.out.println(dateFormat.format(date) + " Antenna Cycle End Notification Received");
+                        continue;
+                    }
+                    else if (byteArrayToHexString(inData,len).startsWith("4003BFFCBFFCBFFC"))
+                    {
+                        // Check Abort command response
+                        System.out.println("All tag data has been returned");
+                        break ;
+                    }
 
-                            Disconnect();
-                            try {
-                                date = new Date();
-                                PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(ipAddress + ".txt", true)));
-                                out.println(dateFormat.format(date) + " Reader connection lost");
-                                out.close();
-                            } catch (IOException e) {
-                                System.out.println("Could not write to log file " + e.toString());
-                            }
+                    int pkt_ver = (int)(inData[0] & 0xFF);
+                    int flags = (int) (inData[1] & 0xFF);
+                    int pkt_type = (int) (inData[2] & 0xFF) + ((int)(inData[3] & 0xFF) << 8);
+                    int pkt_len = (int) (inData[4] & 0xFF) + ((int)(inData[5] & 0xFF) << 8);
+                    int datalen = pkt_len * 4;
+                    if (pkt_ver != 0x01 && pkt_ver != 0x02 && pkt_ver != 0x03)
+                    {
+                        System.out.println("Unrecognized packet header: " + byteArrayToHexString(inData, len));
+                        continue;
+                    }
 
-                            System.out.println("Reconnect");
-                            while (!Connect(ip)){};
-
+                    //wait until the full packet data has come in
+                    boolean inCompletePacket=false;
+                    while(TCPDataIn.available() < datalen)
+                    {
+                        if (System.currentTimeMillis() - timer >= 3000) {
+                            System.out.println("Incomplete packet returned.  Packet header: " + byteArrayToHexString(inData, len));
+                            len=TCPDataIn.read(inData, 0, TCPDataIn.available());
+                            System.out.println("Packet body: " + byteArrayToHexString(inData, len));
+                            inCompletePacket=true;
                             break;
                         }
                     }
-                    Thread.sleep(1); // save CPU usage
+                    if (inCompletePacket)
+                    {
+                        try {
+                            date = new Date();
+                            PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(ipAddress + ".txt", true)));
+                            out.println(dateFormat.format(date) + " Incomplete data packet due to reader connection lost");
+                            out.close();
+                        } catch (IOException e) {
+                            System.out.println("Could not write to log file " + e.toString());
+                        }
+                        break;
+                    }
+                    //finish reading
+                    TCPDataIn.read(inData, 8, datalen);
+
+                    if (pkt_type == 0x8001 || pkt_type == 0x0001)
+                    {
+                        date = new Date();
+                        System.out.println(dateFormat.format(date) + " Command End Packet: " + byteArrayToHexString(inData,len+datalen));
+                        break;
+                    }
+                    else if (pkt_type == 0x8000 || pkt_type == 0x0000)
+                    {
+                        date = new Date();
+                        System.out.println(dateFormat.format(date) + " Command Begin Packet: " + byteArrayToHexString(inData,len+datalen));
+                        continue;
+                    }
+                    else if (pkt_type == 0x0006)
+                    {
+                        date = new Date();
+                        System.out.println(dateFormat.format(date) + " Tag Access Packet: " + byteArrayToHexString(inData,len+datalen));
+                        if (inData[1] == 0)
+                        {
+                            for (int i = 0; i < 16; i++)
+                                response[i] = inData[i+20];
+                            String result = byteArrayToHexString(AES.decrypt(hexStringToByteArray(key), response), 16);
+                            if (result.startsWith("96C5"))
+                            {
+                                if (result.startsWith("FD5D8048F48DD09AAD22", 12))
+                                {
+                                    System.out.println(result);
+                                    ret = true;
+                                }
+                            }
+                        }
+                        continue;
+                    }
+                    else
+                    {
+                        System.out.println(dateFormat.format(date) + " Other Packet: " + byteArrayToHexString(inData,len+datalen));
+                        continue;
+                    }
                 }
+                else {
+                    if (System.currentTimeMillis() - timer >= 2000) {
+                        System.out.println("Connection lost.  Please reconnect");
+                        System.out.println("Close Connections");
+
+                        Disconnect();
+                        try {
+                            date = new Date();
+                            PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(ipAddress + ".txt", true)));
+                            out.println(dateFormat.format(date) + " Reader connection lost");
+                            out.close();
+                        } catch (IOException e) {
+                            System.out.println("Could not write to log file " + e.toString());
+                        }
+
+                        System.out.println("Reconnect");
+                        while (!Connect(ip)){};
+
+                        break;
+                    }
+                }
+                Thread.sleep(1); // save CPU usage
             }
             //Send Abort command
             clearReadBuffer(TCPDataIn);
@@ -464,6 +494,8 @@ public class Ucode7{
         {
             System.err.println(ex.getMessage());
         }
+        
+        return ret;
     }
     
     private void AsyncCallbackRaiseEvent(TagCallbackInfo data)

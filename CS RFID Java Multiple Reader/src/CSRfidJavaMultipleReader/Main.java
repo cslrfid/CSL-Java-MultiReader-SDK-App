@@ -11,7 +11,7 @@ import Netfinder.*;
 public class Main {
 
     // <editor-fold defaultstate="collapsed" desc="Variable">
-    public static String demeAppVer = "1.0.18";
+    public static String demeAppVer = "1.0.22";
     public static NetFinder netfinder;
     public static String applicationSettings = "";
     public static Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();

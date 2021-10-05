@@ -22,13 +22,14 @@ public class TagTIDInventoryFrame extends javax.swing.JFrame implements AsyncCal
     private TIDInventory[] m_inventory = new TIDInventory[MAX_THREAD];
     private int lastThreadId = -1;
     private String JavaProcessPath = "CS203JavaProcessDemo.jar"; // modify it to your desired path
+    private int region = 0;
     
     private AsyncCallbackEventListener cls = this;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Init">
     /** Creates new form TagInventoryFrame */
-    public TagTIDInventoryFrame() {
+    public TagTIDInventoryFrame(int region) {
         initComponents();
 
         //Center the dialog
@@ -38,6 +39,7 @@ public class TagTIDInventoryFrame extends javax.swing.JFrame implements AsyncCal
         inventoryTableModel = (DefaultTableModel)table_inventory.getModel();
 
         this.setIconImage(new ImageIcon("CSL Logo.jpg").getImage());
+        this.region = region;
     }
     // </editor-fold>
 
@@ -363,7 +365,7 @@ public class TagTIDInventoryFrame extends javax.swing.JFrame implements AsyncCal
         }
 
         public void run() {                   
-            inventory.StartInventory(ip);
+            inventory.StartInventory(ip, region);
         }
     }
     // </editor-fold>
@@ -374,7 +376,7 @@ public class TagTIDInventoryFrame extends javax.swing.JFrame implements AsyncCal
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new TagTIDInventoryFrame().setVisible(true);
+                new TagTIDInventoryFrame(0).setVisible(true);
             }
         });
     }

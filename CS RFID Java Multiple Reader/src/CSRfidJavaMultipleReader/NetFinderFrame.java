@@ -63,6 +63,9 @@ public class NetFinderFrame extends javax.swing.JFrame implements DeviceFoundEve
         btn_start = new javax.swing.JButton();
         btn_ucode7 = new javax.swing.JButton();
         btn_tidinventory = new javax.swing.JButton();
+        btn_ucodedna = new javax.swing.JButton();
+        cb_region = new javax.swing.JComboBox();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Search Device");
@@ -131,15 +134,29 @@ public class NetFinderFrame extends javax.swing.JFrame implements DeviceFoundEve
             }
         });
 
+        btn_ucodedna.setBackground(java.awt.Color.cyan);
+        btn_ucodedna.setText("UCODE DNA");
+        btn_ucodedna.setEnabled(false);
+        btn_ucodedna.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_ucodednaActionPerformed(evt);
+            }
+        });
+
+        cb_region.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "0  - Factory Default", "1  - Hong Kong ", "2  - South Africa", "3  - Thailand", "4  - LH1", "5  - LH2", "6  - Venezuela", "7  - Dominican Republic", "8  - Indonesia", "9  - UH2", "10 - Uruguay", "11 - FCC", "12 - UH1", "13 - Argentina", "14 - Malaysia", "15 - Singapore", "16 - Australia", "17 - Brazil 902-904", "18 - Brazil 917-924", "19 - Brazil 915-927", "20 - Brazil 902-906, 915-927", "21 - Brazil 902-906", "22 - Philippine", "23 - Costa Rica", "24 - Peru", "25 - Colombia", "26 - Israel", "27 - Panama", "28 - Chile", "29 - ETSI ", "30 - India " }));
+
+        jLabel1.setText("Region:");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 592, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 635, Short.MAX_VALUE)
+                    .addComponent(lbl_info, javax.swing.GroupLayout.DEFAULT_SIZE, 635, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(btn_start, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btn_inventory, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -147,17 +164,23 @@ public class NetFinderFrame extends javax.swing.JFrame implements DeviceFoundEve
                         .addComponent(btn_ucode7, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btn_tidinventory)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_ucodedna)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btn_clear, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(lbl_info, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 592, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cb_region, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 343, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 336, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbl_info)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -165,8 +188,13 @@ public class NetFinderFrame extends javax.swing.JFrame implements DeviceFoundEve
                     .addComponent(btn_clear, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btn_inventory, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btn_ucode7, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_tidinventory, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                    .addComponent(btn_tidinventory, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_ucodedna, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cb_region, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -215,7 +243,7 @@ public class NetFinderFrame extends javax.swing.JFrame implements DeviceFoundEve
             Main.deviceName[i] = selectedDeviceInfo.device_name;
         }
 
-        new TagInventoryFrame().setVisible(true);
+        new TagInventoryFrame(cb_region.getSelectedIndex()).setVisible(true);
 
         Close();
 }//GEN-LAST:event_btn_inventoryActionPerformed
@@ -225,6 +253,7 @@ public class NetFinderFrame extends javax.swing.JFrame implements DeviceFoundEve
         btn_inventory.setEnabled(false);
         btn_ucode7.setEnabled(false);
         btn_tidinventory.setEnabled(false);
+        btn_ucodedna.setEnabled(false);
         Main.netfinder.ClearDeviceList();
         deviceListModel.clear();
         Main.netfinder.ResearchDevice();
@@ -237,17 +266,20 @@ public class NetFinderFrame extends javax.swing.JFrame implements DeviceFoundEve
                     btn_inventory.setEnabled(false);
                     btn_ucode7.setEnabled(false);
                     btn_tidinventory.setEnabled(false);
+                    btn_ucodedna.setEnabled(false);
                     break;
                 case Mode.Normal:
                     btn_inventory.setEnabled(true);
                     btn_ucode7.setEnabled(true);
                     btn_tidinventory.setEnabled(true);
+                    btn_ucodedna.setEnabled(true);
                     break;
             }
         } else {
             btn_inventory.setEnabled(false);
             btn_ucode7.setEnabled(false);
             btn_tidinventory.setEnabled(false);
+            btn_ucodedna.setEnabled(false);
         }
 }//GEN-LAST:event_list_deviceValueChanged
 
@@ -316,10 +348,36 @@ public class NetFinderFrame extends javax.swing.JFrame implements DeviceFoundEve
             Main.deviceName[i] = selectedDeviceInfo.device_name;
         }
 
-        new TagTIDInventoryFrame().setVisible(true);
+        new TagTIDInventoryFrame(cb_region.getSelectedIndex()).setVisible(true);
 
         Close();
     }//GEN-LAST:event_btn_tidinventoryActionPerformed
+
+    private void btn_ucodednaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ucodednaActionPerformed
+        if (m_start) {
+            m_start = false;
+            Main.netfinder.Stop();
+            btn_start.setBackground(Color.green);
+            btn_start.setText("Search");
+        }
+
+        int selectedSize = list_device.getSelectedIndices().length;
+        if (selectedSize > 50) selectedSize = 50;
+        Main.ipAddress = new String[selectedSize];
+        Main.macAddress = new String[selectedSize];
+        Main.deviceName = new String[selectedSize];
+        for (int i = 0; i < selectedSize; i++)
+        {
+            selectedDeviceInfo = (DeviceInformation)list_device.getSelectedValues()[i];
+            Main.ipAddress[i] = Main.netfinder.GetIpName(selectedDeviceInfo.ip);
+            Main.macAddress[i] = Main.netfinder.GetMacName(selectedDeviceInfo.mac);
+            Main.deviceName[i] = selectedDeviceInfo.device_name;
+        }
+
+        new TagUcodeDNAFrame(cb_region.getSelectedIndex()).setVisible(true);
+
+        Close();
+    }//GEN-LAST:event_btn_ucodednaActionPerformed
 
     private void Close()
     {
@@ -427,6 +485,9 @@ public class NetFinderFrame extends javax.swing.JFrame implements DeviceFoundEve
     private javax.swing.JButton btn_start;
     private javax.swing.JButton btn_tidinventory;
     private javax.swing.JButton btn_ucode7;
+    private javax.swing.JButton btn_ucodedna;
+    private javax.swing.JComboBox cb_region;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lbl_info;
     private javax.swing.JList list_device;

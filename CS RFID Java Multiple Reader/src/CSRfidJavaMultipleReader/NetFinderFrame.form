@@ -28,10 +28,11 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="1" attributes="0">
+          <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="1" attributes="0">
-                  <Component id="jScrollPane1" alignment="0" pref="592" max="32767" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="jScrollPane1" alignment="0" pref="635" max="32767" attributes="0"/>
+                  <Component id="lbl_info" alignment="0" pref="635" max="32767" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="btn_start" min="-2" pref="92" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -40,10 +41,17 @@
                       <Component id="btn_ucode7" min="-2" pref="92" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="btn_tidinventory" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="btn_ucodedna" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="32767" attributes="0"/>
                       <Component id="btn_clear" min="-2" pref="92" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="lbl_info" alignment="0" pref="592" max="32767" attributes="0"/>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="cb_region" min="-2" pref="190" max="-2" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                  </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -53,8 +61,8 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jScrollPane1" pref="343" max="32767" attributes="0"/>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <Component id="jScrollPane1" min="-2" pref="336" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
               <Component id="lbl_info" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
@@ -63,8 +71,14 @@
                   <Component id="btn_inventory" alignment="3" min="-2" pref="33" max="-2" attributes="0"/>
                   <Component id="btn_ucode7" alignment="3" min="-2" pref="33" max="-2" attributes="0"/>
                   <Component id="btn_tidinventory" alignment="3" min="-2" pref="33" max="-2" attributes="0"/>
+                  <Component id="btn_ucodedna" alignment="3" min="-2" pref="33" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="cb_region" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -164,6 +178,62 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_tidinventoryActionPerformed"/>
       </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="btn_ucodedna">
+      <Properties>
+        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="ff" green="ff" id="cyan" palette="1" red="0" type="palette"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="UCODE DNA"/>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_ucodednaActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JComboBox" name="cb_region">
+      <Properties>
+        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+          <StringArray count="31">
+            <StringItem index="0" value="0  - Factory Default"/>
+            <StringItem index="1" value="1  - Hong Kong "/>
+            <StringItem index="2" value="2  - South Africa"/>
+            <StringItem index="3" value="3  - Thailand"/>
+            <StringItem index="4" value="4  - LH1"/>
+            <StringItem index="5" value="5  - LH2"/>
+            <StringItem index="6" value="6  - Venezuela"/>
+            <StringItem index="7" value="7  - Dominican Republic"/>
+            <StringItem index="8" value="8  - Indonesia"/>
+            <StringItem index="9" value="9  - UH2"/>
+            <StringItem index="10" value="10 - Uruguay"/>
+            <StringItem index="11" value="11 - FCC"/>
+            <StringItem index="12" value="12 - UH1"/>
+            <StringItem index="13" value="13 - Argentina"/>
+            <StringItem index="14" value="14 - Malaysia"/>
+            <StringItem index="15" value="15 - Singapore"/>
+            <StringItem index="16" value="16 - Australia"/>
+            <StringItem index="17" value="17 - Brazil 902-904"/>
+            <StringItem index="18" value="18 - Brazil 917-924"/>
+            <StringItem index="19" value="19 - Brazil 915-927"/>
+            <StringItem index="20" value="20 - Brazil 902-906, 915-927"/>
+            <StringItem index="21" value="21 - Brazil 902-906"/>
+            <StringItem index="22" value="22 - Philippine"/>
+            <StringItem index="23" value="23 - Costa Rica"/>
+            <StringItem index="24" value="24 - Peru"/>
+            <StringItem index="25" value="25 - Colombia"/>
+            <StringItem index="26" value="26 - Israel"/>
+            <StringItem index="27" value="27 - Panama"/>
+            <StringItem index="28" value="28 - Chile"/>
+            <StringItem index="29" value="29 - ETSI "/>
+            <StringItem index="30" value="30 - India "/>
+          </StringArray>
+        </Property>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel1">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Region:"/>
+      </Properties>
     </Component>
   </SubComponents>
 </Form>
